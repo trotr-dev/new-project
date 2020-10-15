@@ -1,10 +1,10 @@
 const express = require('express');
-const { Users } = require('../../models');
 const { registerSchema } = require('../../schema');
 
 const router = express.Router();
 
 router.post('/users/register', async (req, res) => {
+    const { UserModel } = res.locals;
     try {
         const { error, value } = registerSchema.validate(req.body);
         
@@ -14,18 +14,10 @@ router.post('/users/register', async (req, res) => {
         const {
             username,
             namaLengkap,
-            email,
-            password
+            email
         } = value;
 
-        const user = new Users({
-            username,
-            email,
-            namaLengkap,
-            password
-        });
-    
-        await user.save();
+        await UserModel.registerUser(value);
     
         res.send({ username, namaLengkap, email });
     } catch(e) {
